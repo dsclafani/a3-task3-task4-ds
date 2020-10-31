@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 library(tidyverse)
 library(here)
 library(janitor)
@@ -75,20 +75,29 @@ kable(summary_table) %>%
   
 4.469797 - 6.776489
 
+(6.776489/4.469797)-1
+
+((6.776489-4.469797)/ 4.469797) *100
+
 ```
 
 
 
 ### Summary of graphs and table
 
-> The histograms of the red and purple sea urchins show roughly normal distributed data. The spread differences between the red and purple sea urchins is obvious in both the histogram and boxplot graphs, on average red sea urchins have a larger diameter than purple sea urchins. Red urchins have a mean diameter of 6.78 cm with a standard deviation of 1.89 cm, while purple sea urchins have a mean of 4.47 cm and a standard deviation of 1.18 cm. The boxplots gives a clear visualization of the differences in mean with the middle line of the box showing the mean of each sample. The mean size of red sea urchin's diameter is 2.31 cm larger, or 36% larger, than the mean size of purple sea urchin's diameters.
+> The histograms of the red and purple sea urchins show roughly normal distributed data. The spread differences between the red and purple sea urchins is obvious in both the histogram and boxplot graphs, on average red sea urchins have a larger diameter than purple sea urchins. Red urchins have a mean diameter of 6.78 cm with a standard deviation of 1.89 cm, while purple sea urchins have a mean of 4.47 cm and a standard deviation of 1.18 cm. The boxplots gives a clear visualization of the differences in mean with the middle line of the box showing the mean of each sample. The mean size of red sea urchin's diameter is 2.31 cm larger, or 51.6% larger, than the mean size of the purple sea urchin's diameter.
 
 ### Part 2: Purple urchins by site and year
 
 ```{r}
-purple_urchins <- sea_urchins %>% 
+
+urchins_clean <- sea_urchins %>% #cleaning the data before converting the data to a date class, somehow the numbers were in a "function" class, so I had to clean the dates using mutate before I could use the mutate mdy function to make the numbers into a date class
+  mutate(date_new = mdy(date))
+class(urchins_clean$date)
+
+purple_urchins <- urchins_clean %>% 
   filter(common_name == "Purple Urchin") %>% 
-  mutate(date_new = ymd(date)) %>% 
+  mutate(date_new = mdy(date)) %>% 
   mutate(year = year(date_new)) %>%
   mutate(site_full = case_when(
     site == "NAPL" ~ "Naples Reef",
@@ -97,6 +106,7 @@ purple_urchins <- sea_urchins %>%
     site == "MOHK" ~ "Mohawk Reef",
     site == "IVEE" ~ "Isla Vista Reef"
   ))
+
   
 ```
 
@@ -107,8 +117,7 @@ purple_summary <- purple_urchins %>%
   group_by(site_full, year) %>% 
   count(site_full) %>% 
   rename(observations = n,
-         "Site Name" = site_full)
-  
+         "Site_Name" = site_full)
 
 kable(purple_summary) %>% 
   kable_styling(full_width = F) %>% 
@@ -120,8 +129,12 @@ kable(purple_summary) %>%
 
 ```{r}
 
-ggplot(data = purple_summary, aes(x = year, y = observations)) + geom_col() +
-  facet_wrap(~ "Site Name")
+ggplot(data = purple_summary, aes(x = year, y=observations)) + geom_col() +
+  facet_wrap(~Site_Name) +
+  labs(x= "Year", y = "Number of Observations Recorded", 
+       title = "Number of Purple Urchins Recorded at Each Site from 2008-2020") +
+  theme(plot.title = element_text(hjust = 0.5))
+
 
 ```
 
