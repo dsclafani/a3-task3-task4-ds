@@ -1,0 +1,128 @@
+---
+title: "a3_task3_danielle_sclafani"
+author: "Danielle Sclafani"
+date: "10/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+library(lubridate)
+```
+
+## Part 1
+### 1. Reading in sea urchin data
+
+```{r}
+sea_urchins <- read_csv(here("data", "urchins.csv")) %>%
+  clean_names()
+```
+### 2. Comparing the size of red and purple sea urchins using graphs
+
+### First Graph: histogram
+
+```{r}
+ggplot(data=sea_urchins, aes(x=size)) + geom_histogram(bins = 25) +
+  facet_wrap(~ common_name) +
+  labs(x= "Sea Urchin Diameter (cm)", y= "Count of Sea Urchins",
+       title = "Distribution of Sea Urchin Size by Common Name") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+### Second Graph: Boxplot
+
+```{r}
+ggplot(data=sea_urchins, aes(x=common_name, y=size)) + geom_boxplot() +
+  labs(x= "Sea Urchin Type", y= "Sea Urchin Diameter (cm)",
+       title = "Distribution of Sea Urchin Size by Common Name") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+### Creating summary statistics table for purple and red sea urchins
+
+ > Step 1: finding the summary stastics
+
+```{r}
+sea_urchin_summary <- sea_urchins %>% 
+  group_by(common_name) %>% # grouped by common name
+  summarize(mean_size = mean(size), #found the mean of each type of sea urchin
+            sd_size = sd(size), #found the standard deviation
+            median_size = median(size),#found the median
+            n= n()) #gave us the sample size 
+
+sea_urchin_summary
+```
+
+> Step 2: Putting together the table with Kable
+
+```{r}
+summary_table <- sea_urchin_summary %>% 
+  rename("Name" = common_name,
+         "Mean (cm)" = mean_size,
+         "Standard Deviation (cm)" = sd_size,
+         "Median (cm)" = median_size,
+         "Sample Size" = n
+         )
+
+kable(summary_table) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"),
+                full_width = F) %>% 
+  add_header_above(c("Summary Statistics of Red and Purple Sea Urchins" = 5))
+  
+4.469797 - 6.776489
+
+```
+
+
+
+### Summary of graphs and table
+
+> The histograms of the red and purple sea urchins show roughly normal distributed data. The spread differences between the red and purple sea urchins is obvious in both the histogram and boxplot graphs, on average red sea urchins have a larger diameter than purple sea urchins. Red urchins have a mean diameter of 6.78 cm with a standard deviation of 1.89 cm, while purple sea urchins have a mean of 4.47 cm and a standard deviation of 1.18 cm. The boxplots gives a clear visualization of the differences in mean with the middle line of the box showing the mean of each sample. The mean size of red sea urchin's diameter is 2.31 cm larger, or 36% larger, than the mean size of purple sea urchin's diameters.
+
+### Part 2: Purple urchins by site and year
+
+```{r}
+purple_urchins <- sea_urchins %>% 
+  filter(common_name == "Purple Urchin") %>% 
+  mutate(date_new = ymd(date)) %>% 
+  mutate(year = year(date_new)) %>%
+  mutate(site_full = case_when(
+    site == "NAPL" ~ "Naples Reef",
+    site == "AQUE" ~ "Arroyoa Quemado Reef",
+    site == "CARP" ~ "Carpinteria Reef",
+    site == "MOHK" ~ "Mohawk Reef",
+    site == "IVEE" ~ "Isla Vista Reef"
+  ))
+  
+```
+
+## Creating a summary table - total number of purple urchins observed by site and year, starting from purple_urchins you created above and using the count() function to find counts of observations by group. You do not need to finalize this table (you’ll just use the output in a plot in the next step)
+
+```{r}
+purple_summary <- purple_urchins %>% 
+  group_by(site_full, year) %>% 
+  count(site_full) %>% 
+  rename(observations = n,
+         "Site Name" = site_full)
+  
+
+kable(purple_summary) %>% 
+  kable_styling(full_width = F) %>% 
+  add_header_above(c("# of Purple Urchins recorded at each site by year" = 3))
+```
+
+
+## Graph of purple urchins at each site over time
+
+```{r}
+
+ggplot(data = purple_summary, aes(x = year, y = observations)) + geom_col() +
+  facet_wrap(~ "Site Name")
+
+```
+
+
