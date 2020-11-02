@@ -1,0 +1,101 @@
+---
+title: "a3_task4_danielle_sclafani"
+author: "Danielle Sclafani"
+date: "10/31/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(kableExtra)
+library(lubridate)
+```
+
+### 1. Reading in the data and initial wrangling
+
+```{r}
+urchin_data <- read_csv(here("data", "urchins.csv")) %>%
+   mutate(date_new = mdy(DATE)) %>% # using data in DATE column to make date_new in the class of "Date"
+  mutate(year = year(date_new)) %>% # adding a column for year
+  mutate(month = month(date_new)) %>% # adding a column for month
+  filter(COMMON_NAME == "Purple Urchin") %>%  # filtering to only purple urchins
+  filter(year == 2010) %>% # filtering to the year of 2010
+  filter(month == 1) %>% # filtering to January
+  filter(SITE == "NAPL")  # filtering site to NAPL only
+
+class(urchin_data$date_new)
+
+
+
+
+```
+
+
+### 2. Making ggplot of purple urchins in January 2010 at Naples Reef site grouped by treatment type
+
+```{r}
+ggplot(data = urchin_data, aes(x=SIZE)) + geom_histogram(binwidth = 0.25, aes(color = TREATMENT)) +
+  facet_wrap(~ TREATMENT)
+```
+
+### 3. Creating a qqplot
+
+```{r}
+ggplot(data = urchin_data, aes(sample = SIZE)) + geom_qq() +
+  facet_wrap(~ TREATMENT)
+```
+
+>  From the initial histogram, the annual treatment group looked as though it may be bimodal, and have a slightly smaller mean than the control treatment group. From the QQ plot, the samples from the control and annual treatment groups both look linaer paired with sample sizes larger than 30,  the distributions can be considered normal. 
+
+###. 4. Creating a summary statistics table
+
+```{r, fig.cap= "Table 1.0: Summary Statistics of Purple Sea Urchins collected from the Naples Reef Site in January 2010. Samples are grouped by treatment group, annual trimmming of kelp forests or the control group in which kelp forests were kept intact all year round. All measurements are recoded in centimeters"}
+
+NAPL_purple_summary <- urchin_data %>% #using urchin data above to find summary statistics
+  rename(treatment = TREATMENT) %>% 
+  group_by(treatment) %>% # group by treatment, control or annual
+  summarize(mean_diameter = mean(SIZE), # summarize by the means of the treatment groups
+            sd_size = sd(SIZE), #summarize by SD
+            median_size = median(SIZE), #summarize by median
+            sample_size = n()) %>%  #summarize by sample size
+  rename("mean (cm)" = mean_diameter) %>% 
+  rename("standard deviation (cm)" = sd_size) %>% 
+  rename("median (cm)" = median_size)
+
+kable(NAPL_purple_summary) %>% 
+  kable_classic(full_width = F) %>% 
+  add_header_above(c("Summary Statistics of Purple Urchins collected from Naples Reef Site \n in January 2010 in varying Treatment Groups" = 5))
+```
+
+
+### 5. Two-Sample T Test
+
+need to create vectors of the two samples you want to compare before you can run the t-test
+
+```{r}
+annual_sample <-urchin_data %>% # creating a vector of annual treatment purple urchin diameter sizes (cm)
+  filter(TREATMENT == "ANNUAL") %>% 
+  pull(SIZE)
+
+control_sample <-urchin_data %>% # creating a vector of control treatment purple urchin diameter sizes (cm)
+  filter(TREATMENT == "CONTROL") %>% 
+  pull(SIZE)
+
+
+t.test(x=annual_sample, y=control_sample)
+
+```
+
+```{r}
+3.916667 - 3.725806 
+
+((3.916667 - 3.725806)/3.725806) *100
+```
+
+
+
+> The t-test has given us the mean values for purple urchins at the Naples Reef Site in 2010 for two different treatment groups, the control treatment and the annual treatment. The mean diameter size of purple sea urchins from the annual treatment group is 3.92 centimeters, and the mean diameter of purple sea urchins from the control treatment group is 3.73 centimeters. The mean diameter or sea urchins in the annual treatment group is 0.19 centimeters larger, or 5.12% larger, than the mean diameter of the purple sea urchins in the control treatment group. These means are relatively similar to one another. The two sample t-test resulted in a p-value of 0.2536, meaning there is a 25.36% probablity that we could have gotten means atleast this different (atleast 0.19 centimeters different), if they were drawn from populatinos with the same mean. This means, that we cannot reject a null hypothesis that states that purple sea urchins in the control treatment group and annual treatment group have different population means.
+
