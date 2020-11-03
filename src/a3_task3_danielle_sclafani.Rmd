@@ -27,10 +27,10 @@ sea_urchins <- read_csv(here("data", "urchins.csv")) %>%
 
 ```{r}
 ggplot(data=sea_urchins, aes(x=size)) + geom_histogram(bins = 25) +
-  facet_wrap(~ common_name) +
+  facet_wrap(~ common_name) + #make two graphs based on common_name
   labs(x= "Sea Urchin Diameter (cm)", y= "Count of Sea Urchins",
        title = "Distribution of Sea Urchin Size by Common Name") +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) # centers the plot title
 ```
 
 ### Second Graph: Boxplot
@@ -39,7 +39,7 @@ ggplot(data=sea_urchins, aes(x=size)) + geom_histogram(bins = 25) +
 ggplot(data=sea_urchins, aes(x=common_name, y=size)) + geom_boxplot() +
   labs(x= "Sea Urchin Type", y= "Sea Urchin Diameter (cm)",
        title = "Distribution of Sea Urchin Size by Common Name") +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) # centers the plot title
 ```
 
 ### Creating summary statistics table for purple and red sea urchins
@@ -71,7 +71,7 @@ summary_table <- sea_urchin_summary %>%
 kable(summary_table) %>% 
   kable_styling(bootstrap_options = c("striped", "hover"),
                 full_width = F) %>% 
-  add_header_above(c("Summary Statistics of Red and Purple Sea Urchins" = 5))
+  add_header_above(c("Summary Statistics of Red and Purple Sea Urchins" = 5)) # add title to table, across the 5 rows
   
 4.469797 - 6.776489
 
@@ -99,7 +99,7 @@ purple_urchins <- urchins_clean %>%
   filter(common_name == "Purple Urchin") %>% 
   mutate(date_new = mdy(date)) %>% 
   mutate(year = year(date_new)) %>%
-  mutate(site_full = case_when(
+  mutate(site_full = case_when( # creating a site column that writes the full names of the sites
     site == "NAPL" ~ "Naples Reef",
     site == "AQUE" ~ "Arroyoa Quemado Reef",
     site == "CARP" ~ "Carpinteria Reef",
@@ -116,7 +116,7 @@ purple_urchins <- urchins_clean %>%
 purple_summary <- purple_urchins %>% 
   group_by(site_full, year) %>% 
   count(site_full) %>% 
-  rename(observations = n,
+  rename(observations = n, #renaming for the purpose of the title column names
          "Site_Name" = site_full)
 
 kable(purple_summary) %>% 
