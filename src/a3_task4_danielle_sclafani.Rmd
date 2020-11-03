@@ -37,7 +37,7 @@ class(urchin_data$date_new)
 ### 2. Making ggplot of purple urchins in January 2010 at Naples Reef site grouped by treatment type
 
 ```{r}
-ggplot(data = urchin_data, aes(x=SIZE)) + geom_histogram(binwidth = 0.25, aes(color = TREATMENT)) +
+ggplot(data = urchin_data, aes(x=SIZE)) + geom_histogram(binwidth = 0.25) +
   facet_wrap(~ TREATMENT)
 ```
 
@@ -48,7 +48,7 @@ ggplot(data = urchin_data, aes(sample = SIZE)) + geom_qq() +
   facet_wrap(~ TREATMENT)
 ```
 
->  From the initial histogram, the annual treatment group looked as though it may be bimodal, and have a slightly smaller mean than the control treatment group. From the QQ plot, the samples from the control and annual treatment groups both look linaer paired with sample sizes larger than 30,  the distributions can be considered normal. 
+>  From the initial histogram, the treatment groups look relatively bell shaped. From the QQ plot, the samples from the control and annual treatment groups both look linaer whhen plotted against perfectly normal data, therefore we can consider that the distributions are normal. 
 
 ###. 4. Creating a summary statistics table
 
@@ -73,7 +73,7 @@ kable(NAPL_purple_summary) %>%
 
 ### 5. Two-Sample T Test
 
-need to create vectors of the two samples you want to compare before you can run the t-test
+> need to create vectors of the two samples you want to compare before you can run the t-test
 
 ```{r}
 annual_sample <-urchin_data %>% # creating a vector of annual treatment purple urchin diameter sizes (cm)
@@ -97,5 +97,5 @@ t.test(x=annual_sample, y=control_sample)
 
 
 
-> The t-test has given us the mean values for purple urchins at the Naples Reef Site in 2010 for two different treatment groups, the control treatment and the annual treatment. The mean diameter size of purple sea urchins from the annual treatment group is 3.92 centimeters, and the mean diameter of purple sea urchins from the control treatment group is 3.73 centimeters. The mean diameter or sea urchins in the annual treatment group is 0.19 centimeters larger, or 5.12% larger, than the mean diameter of the purple sea urchins in the control treatment group. These means are relatively similar to one another. The two sample t-test resulted in a p-value of 0.2536, meaning there is a 25.36% probablity that we could have gotten means atleast this different (atleast 0.19 centimeters different), if they were drawn from populatinos with the same mean. This means, that we cannot reject a null hypothesis that states that purple sea urchins in the control treatment group and annual treatment group have different population means.
+> The t-test has given us the mean values for purple urchins at the Naples Reef Site in 2010 for two different treatment groups, the control treatment and the annual treatment. The mean diameter size of purple sea urchins from the annual treatment group is 3.92 centimeters, and the mean diameter of purple sea urchins from the control treatment group is 3.73 centimeters. The mean diameter of sea urchins in the annual treatment group is 0.19 centimeters larger, or 5.12% larger, than the mean diameter of the purple sea urchins in the control treatment group. These means are relatively similar to one another. The two sample t-test resulted in a p-value of 0.2536, meaning there is a 25.36% probablity that we could have gotten means atleast this different (atleast 0.19 centimeters different), if they were drawn from populations with the same mean. This means, that we cannot reject a null hypothesis that states that purple sea urchins in the control treatment group and annual treatment group have different population means.
 
