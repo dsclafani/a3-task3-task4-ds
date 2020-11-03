@@ -93,9 +93,12 @@ t.test(x=annual_sample, y=control_sample)
 3.916667 - 3.725806 
 
 ((3.916667 - 3.725806)/3.725806) *100
+
+3.916667/3.725806 -1
+
 ```
 
 
 
-> The t-test has given us the mean values for purple urchins at the Naples Reef Site in 2010 for two different treatment groups, the control treatment and the annual treatment. The mean diameter size of purple sea urchins from the annual treatment group is 3.92 centimeters, and the mean diameter of purple sea urchins from the control treatment group is 3.73 centimeters. The mean diameter of sea urchins in the annual treatment group is 0.19 centimeters larger, or 5.12% larger, than the mean diameter of the purple sea urchins in the control treatment group. These means are relatively similar to one another. The two sample t-test resulted in a p-value of 0.2536, meaning there is a 25.36% probablity that we could have gotten means atleast this different (atleast 0.19 centimeters different), if they were drawn from populations with the same mean. This means, that we cannot reject a null hypothesis that states that purple sea urchins in the control treatment group and annual treatment group have different population means.
+> The t-test has given us the mean values for purple urchins at the Naples Reef Site in 2010 for two different treatment groups, the control treatment and the annual treatment. The mean diameter size of purple sea urchins from the annual treatment group is 3.92 centimeters with a standard deviation of 0.97  centimeters, and the mean diameter of purple sea urchins from the control treatment group is 3.73 centimeters with a standard deviation of 0.87 centimeters. The mean diameter of sea urchins in the annual treatment group is 0.19 centimeters larger, or 5.12% larger, than the mean diameter of the purple sea urchins in the control treatment group. These means are relatively similar to one another. The two sample t-test resulted in a p-value of 0.2536, meaning there is a 25.36% probablity that we could have gotten means atleast this different (atleast 0.19 centimeters different), if they were drawn from populations with the same mean. This means, that we cannot reject a null hypothesis that states that purple sea urchins in the control treatment group and annual treatment group have different population means.
 
